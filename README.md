@@ -82,5 +82,5 @@ sent to the configured `output` source. The structure of the payload:
 
 # Info
 
-* Repository: https://github.com/carnviore-rb/jackal-webhook
+* Repository: https://github.com/carnivore-rb/jackal-webhook
 * IRC: Freenode @ #carnivore
