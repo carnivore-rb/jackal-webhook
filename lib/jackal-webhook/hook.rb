@@ -3,7 +3,7 @@ require 'jackal-webhook'
 class Jackal::Webhook::Hook < Jackal::Utils::HttpApi; end
 
 Jackal::Webhook::Hook.define do
-  post %r{/(v\d+)/([A-Za-z0-9-_])(.*)} do |msg, version, action, extras|
+  post %r{/(v\d+)/([^/]+)/?(.*)} do |msg, path, version, action, extras, *args|
     begin
       result = msg[:message][:body]
       info "Request received for `#{action}` (#{version}). Processing to pipeline."
@@ -21,10 +21,10 @@ Jackal::Webhook::Hook.define do
         )
       )
       debug "Delivering new payload into pipeline: #{payload.inspect}"
-      destination(:output, payload)
+      Carnivore::Supervisor.supervisor[:jackal_webhook_output].transmit(payload)
       msg.confirm!(
         :response_body => MultiJson.dump(
-          :job_id => payload[:message_id],
+          :job_id => payload[:id],
           :message => 'Request received!'
         ),
         :code => :ok
